@@ -35,7 +35,7 @@ export default class TaskTimeSummationPlugin extends Plugin {
 
     for (let i = lines.length - 1; i >= 0; i--) {
       const line = lines[i];
-      const match = line.match(/^(\s*)- \[.\] (\[\]|\[(\d+)h\])/);
+      const match = line.match(/^(\s*)- \[.\] (\[\]|\[([\d\.]+)h\])/);
 
       if (match) {
         const indent = match[1].length;
@@ -43,7 +43,7 @@ export default class TaskTimeSummationPlugin extends Plugin {
 
         // Parse current time estimate if present
         if (match[2].startsWith('[') && match[3]) {
-          currentTime = parseInt(match[3], 10);
+          currentTime = parseFloat(match[3]);
         }
 
         // Recompute time by summing subtasks
@@ -59,7 +59,7 @@ export default class TaskTimeSummationPlugin extends Plugin {
         if (match[2] === '[]') {
           lines[i] = line.replace(/\[\]/, `[${totalTime}h]`);
         } else {
-          lines[i] = line.replace(/\[(\d+)h\]/, `[${totalTime}h]`);
+          lines[i] = line.replace(/\[([\d\.]+)h\]/, `[${totalTime}h]`);
         }
 
         // Push the updated total time for this task onto the stack
