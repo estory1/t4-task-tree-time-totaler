@@ -1,0 +1,11 @@
+{
+	"id": "task-estimate-calculator",
+	"name": "Task Estimate Calculator",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "Calculates task estimates given subtask estimates.",
+	"author": "Evan Story",
+	"authorUrl": "https://github.com/estory1",
+	"fundingUrl": "https://github.com/estory1",
+	"isDesktopOnly": false
+}
