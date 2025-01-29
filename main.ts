@@ -36,12 +36,14 @@ export default class TaskTimeSummationPlugin extends Plugin {
     function convertToMinutes(time: number, unit: string | undefined): number {
       if (!unit) return time;
       switch (unit) {
-        case 'D': return time * 60*24*365*10; // Assuming a decade as 10 years
+        case 'D': return time * 60 * 24 * 365 * 10; // Assuming a decade as 10 years
         case 'Y': return time * 525600;
         case 'M': return time * 43200; // Assuming an average month of 30 days
         case 'w': return time * 10080;
         case 'd': return time * 1440;
         case 'h': return time * 60;
+        case 'bd': return time * 480; // Business day: 8 hours
+        case 'bw': return time * 2400; // Business week: 5 days
         case 'm': return time;
         default: return time;
       }
@@ -52,7 +54,7 @@ export default class TaskTimeSummationPlugin extends Plugin {
       let time = timeInMinutes;
       switch (unit) {
         case 'D':
-          return `${(time / (60*24*365*10)).toFixed(1)}D`; // Assuming a decade as 10 years
+          return `${(time / (60 * 24 * 365 * 10)).toFixed(1)}D`; // Assuming a decade as 10 years
         case 'Y':
           return `${(time / 525600).toFixed(1)}Y`;
         case 'M':
@@ -63,6 +65,10 @@ export default class TaskTimeSummationPlugin extends Plugin {
           return `${(time / 1440).toFixed(1)}d`;
         case 'h':
           return `${(time / 60).toFixed(1)}h`;
+        case 'bd':
+          return `${(time / 480).toFixed(1)}bd`; // Business day
+        case 'bw':
+          return `${(time / 2400).toFixed(1)}bw`; // Business week
         case 'm':
           return `${time}m`;
         default:
@@ -103,6 +109,10 @@ export default class TaskTimeSummationPlugin extends Plugin {
             unit = 'd';
           } else if (subtask.unit === 'h' || unit === 'h') {
             unit = 'h';
+          } else if (subtask.unit === 'bw' || unit === 'bw') {
+            unit = 'bw';
+          } else if (subtask.unit === 'bd' || unit === 'bd') {
+            unit = 'bd';
           }
         }
 
