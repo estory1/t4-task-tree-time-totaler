@@ -31,7 +31,44 @@ export default class TaskTimeSummationPlugin extends Plugin {
 
   updateTimeEstimates(content: string): string {
     const lines = content.split('\n');
-    const stack: { level: number; time: number; lineIndex: number }[] = [];
+    const stack: { level: number; time: number; unit?: string }[] = [];
+
+    function convertToMinutes(time: number, unit: string | undefined): number {
+      if (!unit) return time;
+      switch (unit) {
+        case 'D': return time * 60*24*365*10; // Assuming a decade as 10 years
+        case 'Y': return time * 525600;
+        case 'M': return time * 43200; // Assuming an average month of 30 days
+        case 'w': return time * 10080;
+        case 'd': return time * 1440;
+        case 'h': return time * 60;
+        case 'm': return time;
+        default: return time;
+      }
+    }
+
+    function convertFromMinutes(timeInMinutes: number, unit: string | undefined): string {
+      if (!unit) return `${timeInMinutes}`; // Use the raw number for minutes
+      let time = timeInMinutes;
+      switch (unit) {
+        case 'D':
+          return `${(time / (60*24*365*10)).toFixed(1)}D`; // Assuming a decade as 10 years
+        case 'Y':
+          return `${(time / 525600).toFixed(1)}Y`;
+        case 'M':
+          return `${(time / 43200).toFixed(1)}M`; // Assuming an average month of 30 days
+        case 'w':
+          return `${(time / 10080).toFixed(1)}w`;
+        case 'd':
+          return `${(time / 1440).toFixed(1)}d`;
+        case 'h':
+          return `${(time / 60).toFixed(1)}h`;
+        case 'm':
+          return `${time}m`;
+        default:
+          return `${time}`; // Unknown unit
+      }
+    }
 
     for (let i = lines.length - 1; i >= 0; i--) {
       const line = lines[i];
@@ -39,33 +76,48 @@ export default class TaskTimeSummationPlugin extends Plugin {
 
       if (match) {
         const indent = match[1].length;
-        let currentTime = 0;
-        let unit = ''; // Default to empty string if no unit is specified on the line.
-
+        let currentTimeInMinutes = 0;
+        let unit: string | undefined; // Default to undefined for no unit
         // Parse current time estimate if present
         if (match[2].startsWith('[') && match[3]) {
-          currentTime = parseFloat(match[3]);
+          currentTimeInMinutes = convertToMinutes(parseFloat(match[3]), match[4]);
           unit = match[4];
         }
 
         // Recompute time by summing subtasks
-        let totalTime = 0;
+        let totalTimeInMinutes = 0;
         while (stack.length > 0 && stack[stack.length - 1].level > indent) {
-          totalTime += stack.pop()!.time;
+          const subtask = stack.pop()!;
+          totalTimeInMinutes += subtask.time;
+
+          // Determine the coarsest unit to use for the sum
+          if (subtask.unit === 'D' || unit === 'D') {
+            unit = 'D';
+          } else if (subtask.unit === 'Y' || unit === 'Y') {
+            unit = 'Y';
+          } else if (subtask.unit === 'M' || unit === 'M') {
+            unit = 'M';
+          } else if (subtask.unit === 'w' || unit === 'w') {
+            unit = 'w';
+          } else if (subtask.unit === 'd' || unit === 'd') {
+            unit = 'd';
+          } else if (subtask.unit === 'h' || unit === 'h') {
+            unit = 'h';
+          }
         }
 
         // If no subtasks contribute, use the current task's own estimate
-        totalTime = totalTime > 0 ? totalTime : currentTime;
+        totalTimeInMinutes = totalTimeInMinutes > 0 ? totalTimeInMinutes : currentTimeInMinutes;
 
         // Update line with the new total time and unit
         if (match[2] === '[]') {
-          lines[i] = line.replace(/\[\]/, `[${totalTime}${unit}]`);
+          lines[i] = line.replace(/\[\]/, `[${convertFromMinutes(totalTimeInMinutes, unit)}]`);
         } else {
-          lines[i] = line.replace(/\[([\d\.]+)(\w*)\]/, `[${totalTime}${unit}]`);
+          lines[i] = line.replace(/\[([\d\.]+)(\w*)\]/, `[${convertFromMinutes(totalTimeInMinutes, unit)}]`);
         }
 
         // Push the updated total time for this task onto the stack
-        stack.push({ level: indent, time: totalTime, lineIndex: i });
+        stack.push({ level: indent, time: totalTimeInMinutes, unit });
       }
     }
 
