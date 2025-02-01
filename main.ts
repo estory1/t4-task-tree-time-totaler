@@ -7,7 +7,7 @@ export default class TaskTimeSummationPlugin extends Plugin {
     console.log('Task Time Summation Plugin loaded');
 
     // Add a button to the ribbon
-    this.addRibbonIcon('calculator', 'Update Task Time Sums', (evt: MouseEvent) => {
+    this.addRibbonIcon('square-sigma', 'Update Task Time Sums', (evt: MouseEvent) => {
       const activeLeaf = this.app.workspace.activeLeaf;
       if (activeLeaf && activeLeaf.view.getViewType() === 'markdown') {
         const editor = (activeLeaf.view as any).sourceMode.cmEditor;
