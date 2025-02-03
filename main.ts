@@ -1,4 +1,4 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { App, Editor, MarkdownView, Modal, Notice, Plugin } from 'obsidian';
 
 // Obsidian Plugin: Summation of Task-Level Time Estimates
 
@@ -52,27 +52,36 @@ export default class TaskTimeSummationPlugin extends Plugin {
     function convertFromMinutes(timeInMinutes: number, unit: string | undefined): string {
       if (!unit) return `${timeInMinutes}`; // Use the raw number for minutes
       let time = timeInMinutes;
+
       switch (unit) {
         case 'D':
-          return `${(time / (60 * 24 * 365 * 10)).toFixed(1)}D`; // Assuming a decade as 10 years
+          const days = time / (60 * 24 * 365 * 10); // Assuming a decade as 10 years
+          return (days).toFixed(2).endsWith('.00') ? `${days.toFixed(0)}D` : `${(days).toFixed(2)}D`;
         case 'Y':
-          return `${(time / 525600).toFixed(1)}Y`;
+          const years = time / 525600;
+          return (years).toFixed(2).endsWith('.00') ? `${years.toFixed(0)}Y` : `${(years).toFixed(2)}Y`;
         case 'M':
-          return `${(time / 43200).toFixed(1)}M`; // Assuming an average month of 30 days
+          const months = time / 43200; // Assuming an average month of 30 days
+          return (months).toFixed(2).endsWith('.00') ? `${months.toFixed(0)}M` : `${(months).toFixed(2)}M`;
         case 'w':
-          return `${(time / 10080).toFixed(1)}w`;
+          const weeks = time / 10080;
+          return (weeks).toFixed(2).endsWith('.00') ? `${weeks.toFixed(0)}w` : `${(weeks).toFixed(2)}w`;
         case 'd':
-          return `${(time / 1440).toFixed(1)}d`;
+          const daysInt = time / 1440;
+          return (daysInt).toFixed(2).endsWith('.00') ? `${daysInt.toFixed(0)}d` : `${(daysInt).toFixed(2)}d`;
         case 'h':
-          return `${(time / 60).toFixed(1)}h`;
+          const hours = time / 60;
+          return (hours).toFixed(2).endsWith('.00') ? `${hours.toFixed(0)}h` : `${(hours).toFixed(2)}h`;
         case 'bd':
-          return `${(time / 480).toFixed(1)}bd`; // Business day
+          const businessDays = time / 480; // Business day: 8 hours
+          return (businessDays).toFixed(2).endsWith('.00') ? `${businessDays.toFixed(0)}bd` : `${(businessDays).toFixed(2)}bd`;
         case 'bw':
-          return `${(time / 2400).toFixed(1)}bw`; // Business week
+          const businessWeeks = time / 2400; // Business week: 5 days
+          return (businessWeeks).toFixed(2).endsWith('.00') ? `${businessWeeks.toFixed(0)}bw` : `${(businessWeeks).toFixed(2)}bw`;
         case 'm':
-          return `${time}m`;
+          return `${time}m`; // Minutes are always returned as raw number
         default:
-          return `${time}`; // Unknown unit
+          return `${time}`; // Unknown unit is handled as raw number
       }
     }
 
