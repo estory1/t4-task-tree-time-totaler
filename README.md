@@ -1,94 +1,89 @@
-# Obsidian Sample Plugin
+# Obsidian Hierarchical Task Estimate Summation Plugin
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+A plugin for the [Obsidian](https://obsidian.md) note-taking app that calculates hierarchical task time estimate sums.
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
-
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
-
-## First time developing plugins?
-
-Quick starting guide for new plugin devs:
-
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
-
-## Releasing new releases
-
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
-
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
-
-## Adding your plugin to the community plugin list
-
-- Check the [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines).
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
-
-## How to use
-
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
-
-## Manually installing the plugin
-
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
-
-## Improve code quality with eslint (optional)
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- To use eslint with this project, make sure to install eslint from terminal:
-  - `npm install -g eslint`
-- To use eslint to analyze this project use this command:
-  - `eslint main.ts`
-  - eslint will then create a report with suggestions for code improvement by file and line number.
-- If your source code is in a folder, such as `src`, you can use eslint with this command to analyze all files in that folder:
-  - `eslint .\src\`
-
-## Funding URL
-
-You can include funding URLs where people who use your plugin can financially support it.
-
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
-
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
+## Example
+Suppose you have the following task tree, with time estimates on the subtasks composing each task:
+```
+- [ ] [] Task
+	- [ ] [] sub1
+		- [ ] [3h] subsub1
+		- [ ] [1h] subsub2
+	- [ ] [] sub2
+		- [ ] [2.5h] subsub3
 ```
 
-If you have multiple URLs, you can also do:
+**Problem**: you want a sum of the estimates for `sub1` and `sub2`, and ofc for just a few like the above this is easy -- but it's tedious and error-prone to do this as your task-set grows.
 
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
+**Solution**: Running this plugin on your task document computes the result for you, for all tasks containing subtasks, to any depth of hierarchy, and upserts the sums:
+```
+- [ ] [6.50h] Task
+	- [ ] [4h] sub1
+		- [ ] [3h] subsub1
+		- [ ] [1h] subsub2
+	- [ ] [2.50h] sub2
+		- [ ] [2.50h] subsub3
 ```
 
-## API Documentation
+## Features
 
-See https://github.com/obsidianmd/obsidian-api
+### Variable unit summation
+Handles varying time units, summing in the smallest available unit (minutes), and for each task reporting the sum in the coarsest unit used among a task's subtasks, like this:
+```
+- [ ] [1.48w] Task w/ mixed subtask units
+	- [ ] [8.50h] Subtask1
+		- [ ] [8h] Subsubtask1
+		- [ ] [30m] Subsubtask1
+	- [ ] [2.25d] Subtask2
+		- [ ] [2d] Subsubtask1
+		- [ ] [6h] Subsubtask2
+	- [ ] [1.11w] Subtask3
+		- [ ] [1w] Subsubtask1
+		- [ ] [18h] Subsubtask2
+```
+
+Available units (all in calendar-time except where specified):
+
+| unit | description |
+| --- | ---- |
+| D | decade |
+| Y | year |
+| M | month |
+| w | week |
+| d | day |
+| bw | business week (5 days) |
+| bd | business day (8 hours) |
+| h | hour |
+| m | minute |
+
+If no unit is defined, then for unit-accounting purposes a unit of minutes is assumed.
+
+
+## Usage
+
+### Task Formatting
+Since this plugin works by regex-matching task lines, tasks must be defined as seen above.
+
+The general format is:
+`any_indentation - checkbox sum_field task_desc`
+
+Which in Markdown is more specifically:
+`- [ ] [] some task/subtask description`
+
+### Execution
+**NOTE: Every update overwrites any existing sum! Anything you type into the sum field will be overwritten.**
+
+1. Open a doc containing tasks and subtasks.
+2. Click the <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXNxdWFyZS1zaWdtYSI+PHJlY3Qgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiB4PSIzIiB5PSIzIiByeD0iMiIvPjxwYXRoIGQ9Ik0xNiA4LjlWN0g4bDQgNS00IDVoOHYtMS45Ii8+PC9zdmc+" alt="Σ inside a square" /> "Update Task Time Sums" button on the ribbon on the left side of Obsidian.
+
+
+## Potential to-dos
+1. **Maintain cursor position after click**.
+2. **Configurable task format:** enable user-defined task format.
+3. **Configurable decimal-handling:** enable adjustable decimal digits.
+4. **Configurable business time-unit times**: e.g. for 4-day workweek, `bw` = 4 days instead of 5.
+5. **Multiple estimates, multiple sums:** enables per-task estimate distribution.
+    - Example: doing [Three-Point Method](https://en.wikipedia.org/wiki/Three-point_estimation) estimation (`(best-case + 4 * likeliest-case + worst-case)/6`), subtasks A `[1h,2h,4h]` and B `[2h,6h,12h]` gives task-level sums `[3h,8h,16h]`.
+6. **Actual/Completed duration summation**: e.g. completed subtasks having a format like `- [x] [2.0h] ([4.67h]) Completed subsubtask1` would have their parenthetical durations summed.
+7. **Estimate-consumed percentage**: `elapsed duration / estimated duration`.
+8. **Unit tests**.
