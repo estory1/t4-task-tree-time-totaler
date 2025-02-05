@@ -1,10 +1,10 @@
 {
 	"id": "task-estimate-calculator",
 	"name": "Task Estimate Calculator",
-	"version": "20250204.0.0",
+	"version": "20250204.0.1",
 	"minAppVersion": "1.8.4",
 	"description": "Calculates and assigns task estimates given subtask estimates in a task tree in a Markdown document.",
 	"author": "Evan Story",
-	"authorUrl": "https://github.com/estory1/obsidian-task-estimate-calculator",
+	"authorUrl": "https://github.com/estory1",
 	"isDesktopOnly": false
 }
