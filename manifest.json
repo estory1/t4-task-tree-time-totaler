@@ -1,7 +1,7 @@
 {
 	"id": "task-estimate-calculator",
 	"name": "Task Estimate Calculator",
-	"version": "1.0.0",
+	"version": "2025.02.04",
 	"minAppVersion": "0.15.0",
 	"description": "Calculates task estimates given subtask estimates.",
 	"author": "Evan Story",
