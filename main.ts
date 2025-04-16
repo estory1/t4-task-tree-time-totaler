@@ -1,4 +1,4 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin } from 'obsidian';
+import { App, EditableFileView, Editor, MarkdownView, Modal, Notice, Plugin, WorkspaceLeaf } from 'obsidian';
 
 // Obsidian Plugin: Summation of Task-Level Time Estimates
 
@@ -8,9 +8,9 @@ export default class TaskTimeSummationPlugin extends Plugin {
 
     // Add a button to the ribbon
     this.addRibbonIcon('square-sigma', 'Update Task Time Sums', (evt: MouseEvent) => {
-      const activeLeaf = this.app.workspace.activeLeaf;
-      if (activeLeaf && activeLeaf.view.getViewType() === 'markdown') {
-        const editor = (activeLeaf.view as any).sourceMode.cmEditor;
+      const activeLeaf = this.app.workspace.getActiveViewOfType(MarkdownView);
+      if (activeLeaf) {
+        const editor = activeLeaf.editor;
         if (editor) {
           new Notice('Updating task time estimates...');
           const content = editor.getValue();
