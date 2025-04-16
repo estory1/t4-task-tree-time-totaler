@@ -1,4 +1,4 @@
-# Obsidian Hierarchical Task Estimate Summation Plugin
+# Hierarchical Task Estimate Summation Plugin
 
 A plugin for the [Obsidian](https://obsidian.md) note-taking app that calculates hierarchical task time estimate sums.
 

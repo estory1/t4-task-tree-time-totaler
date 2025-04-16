@@ -7,20 +7,15 @@ export default class TaskTimeSummationPlugin extends Plugin {
     console.log('Task Time Summation Plugin loaded');
 
     // Add a button to the ribbon
-    this.addRibbonIcon('square-sigma', 'Update Task Time Sums', (evt: MouseEvent) => {
-      const activeLeaf = this.app.workspace.getActiveViewOfType(MarkdownView);
-      if (activeLeaf) {
-        const editor = activeLeaf.editor;
-        if (editor) {
-          new Notice('Updating task time estimates...');
-          const content = editor.getValue();
-          const updatedContent = this.updateTimeEstimates(content);
-          editor.setValue(updatedContent);
-        } else {
-          new Notice('No active editor found.');
-        }
+    this.addRibbonIcon('square-sigma', 'Update task time sums', (evt: MouseEvent) => {
+      const editor = this.app.workspace.activeEditor?.editor;
+      if (editor) {
+        new Notice('Updating task time estimates...');
+        const content = editor.getValue();
+        const updatedContent = this.updateTimeEstimates(content);
+        editor.setValue(updatedContent);
       } else {
-        new Notice('Please focus on a Markdown editor.');
+        new Notice('No active editor found.');
       }
     });
   }
