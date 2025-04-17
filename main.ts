@@ -8,20 +8,32 @@ export default class TaskTimeSummationPlugin extends Plugin {
 
     // Add a button to the ribbon
     this.addRibbonIcon('square-sigma', 'Update task time sums', (evt: MouseEvent) => {
-      const editor = this.app.workspace.activeEditor?.editor;
-      if (editor) {
-        new Notice('Updating task time estimates...');
-        const content = editor.getValue();
-        const updatedContent = this.updateTimeEstimates(content);
-        editor.setValue(updatedContent);
-      } else {
-        new Notice('No active editor found.');
-      }
+      this.calc();
+    });
+
+    this.addCommand({
+      id: 'hierarchical-task-estimate-summation',
+      name: 'Task estimate summation',
+      callback: () => {
+        this.calc();
+      },
     });
   }
 
   onunload() {
     console.log('Task Time Summation Plugin unloaded');
+  }
+
+  private calc(): void {
+    const editor = this.app.workspace.activeEditor?.editor;
+    if (editor) {
+      new Notice('Updating task time estimates...');
+      const content = editor.getValue();
+      const updatedContent = this.updateTimeEstimates(content);
+      editor.setValue(updatedContent);
+    } else {
+      new Notice('No active editor found.');
+    }
   }
 
   updateTimeEstimates(content: string): string {
