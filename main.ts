@@ -1,19 +1,21 @@
 import { App, EditableFileView, Editor, MarkdownView, Modal, Notice, Plugin, WorkspaceLeaf } from 'obsidian';
 
-// Obsidian Plugin: Summation of Task-Level Time Estimates
+// Obsidian Plugin: Task-Level Time Summation
 
-export default class TaskTimeSummationPlugin extends Plugin {
+export default class TaskTimeTotalsPlugin extends Plugin {
   async onload() {
-    console.log('Task Time Summation Plugin loaded');
+    console.log('Task Time Totals plugin loaded');
+
+    var cmdDisplayName = "(Re)calculate task time totals";
 
     // Add a button to the ribbon
-    this.addRibbonIcon('square-sigma', 'Update task time sums', (evt: MouseEvent) => {
+    this.addRibbonIcon('square-sigma', cmdDisplayName, (evt: MouseEvent) => {
       this.calc();
     });
 
     this.addCommand({
-      id: 'hierarchical-task-estimate-summation',
-      name: 'Task estimate summation',
+      id: 'task-time-totals',
+      name: cmdDisplayName,
       callback: () => {
         this.calc();
       },
@@ -21,10 +23,10 @@ export default class TaskTimeSummationPlugin extends Plugin {
   }
 
   onunload() {
-    console.log('Task Time Summation Plugin unloaded');
+    console.log('Task Time Totals plugin unloaded');
   }
 
-  private calc(): void {
+  calc(): void {
     const editor = this.app.workspace.activeEditor?.editor;
     if (editor) {
       new Notice('Updating task time estimates...');
