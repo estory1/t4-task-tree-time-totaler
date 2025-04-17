@@ -1,10 +1,13 @@
 import { App, EditableFileView, Editor, MarkdownView, Modal, Notice, Plugin, WorkspaceLeaf } from 'obsidian';
 
-// Obsidian Plugin: Task-Level Time Summation
+// Obsidian Plugin: T4: Task Tree Time Totaler
 
 export default class TaskTimeTotalsPlugin extends Plugin {
+  pluginName() { return 'T4: Task Tree Time Totaler'; }
+  pluginId()   { return 't4-task-tree-time-totaler'; }
+
   async onload() {
-    console.log('Task Time Totals plugin loaded');
+    console.log(this.pluginName() + ' plugin loaded');
 
     var cmdDisplayName = "(Re)calculate task time totals";
 
@@ -14,7 +17,7 @@ export default class TaskTimeTotalsPlugin extends Plugin {
     });
 
     this.addCommand({
-      id: 'task-time-totals',
+      id: this.pluginId(),
       name: cmdDisplayName,
       callback: () => {
         this.calc();
@@ -23,7 +26,7 @@ export default class TaskTimeTotalsPlugin extends Plugin {
   }
 
   onunload() {
-    console.log('Task Time Totals plugin unloaded');
+    console.log(this.pluginName() + ' plugin unloaded');
   }
 
   calc(): void {

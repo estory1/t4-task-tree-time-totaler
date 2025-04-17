@@ -1,7 +1,7 @@
 {
-	"id": "task-estimate-calculator",
-	"name": "Task Estimate Calculator",
-	"version": "20250204.0.1",
+	"id": "t4-task-tree-time-totaler",
+	"name": "T4: Task Tree Time Totaler",
+	"version": "20250416.0.0",
 	"minAppVersion": "1.8.4",
 	"description": "Calculates and assigns task estimates given subtask estimates in a task tree in a Markdown document.",
 	"author": "Evan Story",

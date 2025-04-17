@@ -1,4 +1,4 @@
-# Hierarchical Task Estimate Summation Plugin
+# T4: Task Tree Time Totaler
 
 A plugin for the [Obsidian](https://obsidian.md) note-taking app that calculates hierarchical task time estimate sums.
 

@@ -1,7 +1,7 @@
 {
-	"name": "task-estimate-calculator",
+	"name": "t4-task-tree-time-totaler",
 	"version": "1.0.0",
-	"description": "An Obsidian plugin to calculate subtask time estimate sums for tasks.",
+	"description": "An Obsidian plugin to calculate time estimate sums for task trees.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
