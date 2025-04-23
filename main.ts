@@ -9,7 +9,7 @@ export default class TaskTimeTotalsPlugin extends Plugin {
   async onload() {
     console.log(this.pluginName() + ' plugin loaded');
 
-    var cmdDisplayName = "(Re)calculate task time totals";
+    const cmdDisplayName = "(Re)calculate task time totals";
 
     // Add a button to the ribbon
     this.addRibbonIcon('square-sigma', cmdDisplayName, (evt: MouseEvent) => {
