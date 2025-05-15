@@ -17,7 +17,7 @@ export default class TaskTimeTotalsPlugin extends Plugin {
     });
 
     this.addCommand({
-      id: this.pluginId(),
+      id: "calc",
       name: cmdDisplayName,
       callback: () => {
         this.calc();
